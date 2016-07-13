@@ -33,6 +33,22 @@
     NSString *_reactModuleCellReuseIndentifier;
 }
 
+- (NSInteger)tableView: (UITableView *)tableView sectionForSectionIndexTitle:
+    (NSString *)title
+    atIndex:(NSInteger)index
+{
+    return index;
+}
+
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return @[
+        @"A", @"B", @"C", @"D", @"E", @"F", @"G", @"H", @"I", @"J",@"K",
+        @"L", @"M", @"N", @"O", @"P", @"Q", @"R", @"S", @"T", @"U",
+        @"V", @"W", @"X", @"Y", @"Z"
+        ];
+}
+
 -(void)setEditing:(BOOL)editing {
     [self.tableView setEditing:editing animated:YES];
 }
