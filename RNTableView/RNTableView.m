@@ -88,6 +88,8 @@
         _allowsToggle = NO;
         _allowsMultipleSelection = NO;
     }
+
+    NSLog(@"Hello World");
     return self;
 }
 
