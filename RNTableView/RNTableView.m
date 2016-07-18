@@ -128,6 +128,7 @@
         _allowsToggle = NO;
         _allowsMultipleSelection = NO;
         _showIndexList = NO;
+        _showEmptySections = YES;
         _indexDictionary = [[NSMutableDictionary alloc]init];
     }
 
@@ -256,6 +257,11 @@ RCT_NOT_IMPLEMENTED(-initWithCoder:(NSCoder *)aDecoder)
         if (self.headerHeight){
             return self.headerHeight;
         }
+
+        // hide empty sections if configured
+        if (!_showEmptySections && [_sections[section][@"items"] count] == 0)
+            return 0;
+
         return -1;
     }
 }
