@@ -31,22 +31,31 @@
     NSArray *_items;
     NSMutableArray *_cells;
     NSString *_reactModuleCellReuseIndentifier;
+
+    // indexArray and indexDictionary are used to manage the index list on the
+    // right side of tableview. In particular, indexArray contains the
+    // alphabet subset displayed on the tableview right side, while
+    // indexDictionary correlates each letter with the corresponding
+    // section index.
+    NSMutableArray *_indexArray;
+    NSMutableDictionary *_indexDictionary;
 }
 
 - (NSInteger)tableView: (UITableView *)tableView sectionForSectionIndexTitle:
     (NSString *)title
     atIndex:(NSInteger)index
 {
-    return index;
+    NSNumber* sectionIndex = [_indexDictionary valueForKey:title];
+
+    if (sectionIndex != nil)
+        return [sectionIndex integerValue];
+
+    return -1;
 }
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-    return @[
-        @"A", @"B", @"C", @"D", @"E", @"F", @"G", @"H", @"I", @"J",@"K",
-        @"L", @"M", @"N", @"O", @"P", @"Q", @"R", @"S", @"T", @"U",
-        @"V", @"W", @"X", @"Y", @"Z"
-        ];
+    return _indexArray;
 }
 
 -(void)setEditing:(BOOL)editing {
@@ -91,7 +100,7 @@
 
     if ((self = [super initWithFrame:CGRectZero])) {
         _eventDispatcher = bridge.eventDispatcher;
-        
+
         _bridge = bridge;
         while ([_bridge respondsToSelector:NSSelectorFromString(@"parentBridge")]
                && [_bridge valueForKey:@"parentBridge"]) {
@@ -103,9 +112,9 @@
         _autoFocus = YES;
         _allowsToggle = NO;
         _allowsMultipleSelection = NO;
+        _indexDictionary = [[NSMutableDictionary alloc]init];
     }
 
-    NSLog(@"Hello World");
     return self;
 }
 
@@ -345,6 +354,26 @@ RCT_NOT_IMPLEMENTED(-initWithCoder:(NSCoder *)aDecoder)
         sectionData[@"items"] = items;
         [_sections addObject:sectionData];
     }
+
+    // Build index dictionary from existing sections. The dictionary correlates
+    // the section uppercase letters with section indexes.
+    [_indexDictionary removeAllObjects];
+    for (int i = 0; i < [_sections count]; ++i) {
+        NSMutableDictionary *sectionData = [_sections objectAtIndex:i];
+
+        NSString *letterString = [sectionData[@"label"] substringToIndex:1];
+        NSString *upperString = [letterString uppercaseString];
+
+        if ([_indexDictionary valueForKey:upperString] == nil) {
+            [_indexDictionary setValue:[NSNumber numberWithInt:i]
+                              forKey:upperString];
+        }
+    }
+
+    // Build index list letters array from index dictionary.
+    NSArray* k = [_indexDictionary allKeys];
+    _indexArray = [k sortedArrayUsingSelector:@selector(compare:)];
+
     [self.tableView reloadData];
 }
 
