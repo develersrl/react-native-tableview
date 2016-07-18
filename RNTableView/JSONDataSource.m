@@ -22,8 +22,8 @@
     
     NSAssert(error==nil, @"JSON Error %@", [error description]);
     NSAssert([json isKindOfClass:[NSArray class]], @"JSON should be NSArray type");
-    
-    if (filter){
+
+    if (filter && filterArgs){
         for (NSMutableDictionary *sections in json){
             sections[@"items"] = [sections[@"items"] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:filter argumentArray:filterArgs]];
         }
