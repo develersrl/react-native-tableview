@@ -150,15 +150,44 @@ RCT_NOT_IMPLEMENTED(-initWithCoder:(NSCoder *)aDecoder)
     _tableView.scrollIndicatorInsets = insets;
 }
 
+- (void)setFilter:(NSString*)filterStr {
+    if (_filter == nil && filterStr == nil)
+        return;
+
+    if (_filter == nil || filterStr == nil ||
+            ![_filter isEqualToString:filterStr]) {
+        _filter = filterStr;
+        [self fillTableviewFromJson];
+    }
+}
+
+- (void)setFilterArgs:(NSArray*)filterArgs {
+    if (_filterArgs == nil && filterArgs == nil)
+        return;
+
+    if (_filterArgs == nil || filterArgs == nil ||
+            ![_filterArgs isEqualToArray:filterArgs]) {
+        _filterArgs = filterArgs;
+        [self fillTableviewFromJson];
+    }
+}
+
+
 #pragma mark -
+
+- (void)fillTableviewFromJson {
+    datasource = [[JSONDataSource alloc] initWithFilename:_json
+                                         filter:_filter
+                                         args:_filterArgs];
+    self.sections = [NSMutableArray arrayWithArray:[datasource sections]];
+}
 
 - (void)layoutSubviews {
     [self.tableView setFrame:self.frame];
 
     // if sections are not define, try to load JSON
     if (![_sections count] && _json){
-        datasource = [[JSONDataSource alloc] initWithFilename:_json filter:_filter args:_filterArgs];
-        self.sections = [NSMutableArray arrayWithArray:[datasource sections]];
+        [self fillTableviewFromJson];
     }
 
     // find first section with selection
