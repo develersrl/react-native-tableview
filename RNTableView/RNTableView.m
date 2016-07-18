@@ -47,8 +47,17 @@
 {
     NSNumber* sectionIndex = [_indexDictionary valueForKey:title];
 
-    if (sectionIndex != nil)
-        return [sectionIndex integerValue];
+    if (sectionIndex != nil) {
+        NSInteger *i = [sectionIndex integerValue];
+        NSIndexPath *p = [NSIndexPath indexPathForRow:0 inSection:i];
+        [self.tableView scrollToRowAtIndexPath:p
+                        atScrollPosition:UITableViewScrollPositionTop
+                        animated: YES];
+
+        // Uncomment the following line and comment the above block
+        // to disable tableview smooth transition to the target section.
+        // return [sectionIndex integerValue];
+    }
 
     return -1;
 }
