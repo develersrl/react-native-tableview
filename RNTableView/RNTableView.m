@@ -45,6 +45,9 @@
     (NSString *)title
     atIndex:(NSInteger)index
 {
+    if (!_showIndexList)
+        return -1;
+
     NSNumber* sectionIndex = [_indexDictionary valueForKey:title];
 
     if (sectionIndex != nil) {
@@ -64,6 +67,9 @@
 
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
+    if (!_showIndexList)
+        return nil;
+
     return _indexArray;
 }
 
@@ -121,6 +127,7 @@
         _autoFocus = YES;
         _allowsToggle = NO;
         _allowsMultipleSelection = NO;
+        _showIndexList = NO;
         _indexDictionary = [[NSMutableDictionary alloc]init];
     }
 
